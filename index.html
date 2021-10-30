@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CRAZY PANDA TEST TASK | Jquery Slider</title>
+    <link
+      rel="stylesheet"
+      href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
+    />
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+      .result {
+        width: 300px;
+        border: 2px solid black;
+      }
+      button.active {
+        background: #597ee4;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="modes">
+      <button class="edit-color active">text color</button>
+      <button class="edit-background-color">background color</button>
+    </div>
+    <div class="">
+      <div>
+        Red
+        <input
+          class="range range-red"
+          type="range"
+          min="0"
+          max="255"
+          step="1"
+          value="0"
+        />
+      </div>
+      <div>
+        Green
+        <input
+          class="range range-green"
+          type="range"
+          min="0"
+          max="255"
+          step="1"
+          value="0"
+        />
+      </div>
+      <div>
+        Blue
+        <input
+          class="range range-blue"
+          type="range"
+          min="0"
+          max="255"
+          step="1"
+          value="0"
+        />
+      </div>
+    </div>
+    <div class="result">
+      <span class="result-text">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime
+        mollitia, molestiae quas vel sint commodi repudiandae consequuntur
+        voluptatum laborum numquam blanditiis harum quisquam eius sed odit
+        fugiat iusto fuga praesentium optio, eaque rerum! Provident similique
+        accusantium nemo autem. Veritatis obcaecati tenetur iure eius earum ut
+        molestias architecto voluptate aliquam nihil, eveniet aliquid culpa
+        officia aut! Impedit sit sunt quaerat, odit
+      </span>
+    </div>
+    <script>
+      let currentColors = {
+        color: [0, 0, 0],
+        'background-color': [255, 255, 255],
+      };
+      let textColor = [0, 0, 0];
+      let backgroundColor = [255, 255, 255];
+      let changeTarget = $('.result');
+      let changeMode = 'color'; // can be background-color or color
+      const changeColor = (target, color) => {
+        const cssColorValue = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+        target.css(changeMode, color);
+      };
+
+      const onColorInput = (index, colorValueInteger) => {
+        currentColors[changeMode][index] = colorValueInteger;
+        changeColor(changeTarget, currentColors[changeMode]);
+      };
+      const rgb = ['red', 'green', 'blue'];
+      rgb.map((basicColor, index) => {
+        $(`.range-${basicColor}`).on('input', (e) =>
+          onColorInput(index, e.target.value)
+        );
+      });
+
+      const modesContainerTarget = $('.modes');
+      const activeModeClass = 'active';
+      const modes = [
+        { buttonSelector: '.edit-color', mode: 'color' },
+        { buttonSelector: '.edit-background-color', mode: 'background-color' },
+      ];
+      const onModeChange = (modeObject) => {
+        modesContainerTarget.children().removeClass(activeModeClass);
+
+        $(modeObject.buttonSelector).addClass(activeModeClass);
+        changeMode = modeObject.mode;
+        rgb.map((basicColor, index) => {
+          $(`.range-${basicColor}`).on('input', (e) =>
+            onColorInput(index, e.target.value)
+          );
+          rgb.map((basicColor, index) =>
+            $(`.range-${basicColor}`).val(currentColors[changeMode][index])
+          );
+        });
+      };
+
+      modes.map((mode) => {
+        $(mode.buttonSelector).click(() => onModeChange(mode));
+      });
+    </script>
+  </body>
+</html>
