@@ -18,15 +18,31 @@
       }
       button.active {
         background: #597ee4;
+        color: white;
+      }
+      .sliders {
+        /*twice 255px for filled to be */
+        width: 510px;
+      }
+      .slider-range-red .ui-slider-range-min {
+        background-color: red;
+      }
+      .slider-range-green .ui-slider-range-min {
+        background: green;
+      }
+      .slider-range-blue .ui-slider-range-min {
+        background: blue;
       }
     </style>
   </head>
   <body>
+    <h1>Color picker</h1>
     <div class="modes">
-      <button class="edit-color active">text color</button>
-      <button class="edit-background-color">background color</button>
+      <button class="edit-color active">color</button>
+      <button class="edit-background-color">backgroundColor</button>
     </div>
-    <div class="">
+    <h3>custom sliders</h3>
+    <div class="custom-sliders">
       <div>
         Red
         <input
@@ -61,6 +77,23 @@
         />
       </div>
     </div>
+    <hr />
+    <h3>Jquery UI sliders</h3>
+    <div class="sliders">
+      <div>
+        Red
+        <div class="slider-range-red"></div>
+      </div>
+      <div>
+        Green
+        <div class="slider-range-green"></div>
+      </div>
+      <div>
+        Blue
+        <div class="slider-range-blue"></div>
+      </div>
+    </div>
+    <h2>Result</h2>
     <div class="result">
       <span class="result-text">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime
@@ -86,9 +119,12 @@
         target.css(changeMode, color);
       };
 
+      /*custom sliders*/
       const onColorInput = (index, colorValueInteger) => {
         currentColors[changeMode][index] = colorValueInteger;
         changeColor(changeTarget, currentColors[changeMode]);
+        $(`.range-${rgb[index]}`).val(colorValueInteger);
+        $(`.slider-range-${rgb[index]}`).slider({ value: colorValueInteger });
       };
       const rgb = ['red', 'green', 'blue'];
       rgb.map((basicColor, index) => {
@@ -112,14 +148,32 @@
           $(`.range-${basicColor}`).on('input', (e) =>
             onColorInput(index, e.target.value)
           );
-          rgb.map((basicColor, index) =>
-            $(`.range-${basicColor}`).val(currentColors[changeMode][index])
-          );
+          rgb.map((basicColor, index) => {
+            $(`.range-${basicColor}`).val(currentColors[changeMode][index]);
+            $(`.slider-range-${basicColor}`).slider({
+              value: currentColors[changeMode][index],
+            });
+          });
         });
       };
 
       modes.map((mode) => {
         $(mode.buttonSelector).click(() => onModeChange(mode));
+      });
+
+      /*jquery ui sliders*/
+
+      rgb.map((basicColor, index) => {
+        $(`.slider-range-${basicColor}`).slider({
+          range: 'min',
+          min: 0,
+          max: 255,
+          value: 0,
+          animate: true,
+          slide: (event, ui) => {
+            onColorInput(index, ui.value);
+          },
+        });
       });
     </script>
   </body>
